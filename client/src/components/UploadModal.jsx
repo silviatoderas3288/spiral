@@ -6,6 +6,7 @@ function UploadModal({ onUploadSuccess, onClose }) {
   const [text, setText] = useState('')
   const [color, setColor] = useState('#ffffff')
   const [font, setFont] = useState('Arial')
+  const [fontSize, setFontSize] = useState(18)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -67,7 +68,8 @@ function UploadModal({ onUploadSuccess, onClose }) {
       const response = await axios.post('/api/upload', {
         text: text.trim(),
         color: color,
-        font: font
+        font: font,
+        fontSize: fontSize
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -140,6 +142,24 @@ function UploadModal({ onUploadSuccess, onClose }) {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="fontSize">Font Size: {fontSize}px</label>
+            <input
+              type="range"
+              id="fontSize"
+              min="10"
+              max="30"
+              value={fontSize}
+              onChange={(e) => setFontSize(Number(e.target.value))}
+              disabled={uploading}
+              className="font-size-slider"
+            />
+            <div className="font-size-labels">
+              <span>10</span>
+              <span>30</span>
+            </div>
+          </div>
+
           <div className="preview-group">
             <label>Preview</label>
             <div
@@ -147,6 +167,7 @@ function UploadModal({ onUploadSuccess, onClose }) {
               style={{
                 color: color,
                 fontFamily: font,
+                fontSize: `${fontSize}px`,
                 padding: '10px',
                 border: '1px solid #ddd',
                 borderRadius: '4px',

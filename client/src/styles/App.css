@@ -87,22 +87,25 @@ body {
 
 /* Add Thought Button */
 .add-thought-button {
-  width: 100%;
-  padding: 1.25rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: auto;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   color: white;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .add-thought-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .add-thought-button:active {
@@ -166,6 +169,13 @@ body {
 
 .spiral-path {
   vector-effect: non-scaling-stroke;
+  stroke: white;
+  stroke-width: 3;
+  fill: none;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))
+          drop-shadow(0 0 16px rgba(255, 255, 255, 0.6))
+          drop-shadow(0 0 24px rgba(102, 126, 234, 0.5));
+  opacity: 0.9;
 }
 
 .spiral-line {
@@ -197,19 +207,20 @@ body {
 }
 
 .spiral-line-segment {
-  width: 12px;
-  height: 12px;
   position: absolute;
-  top: -6px;
-  left: -6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(200, 200, 200, 0.9) 50%, rgba(150, 150, 150, 0.7) 100%);
+  height: 3px;
+  top: 0;
+  left: 0;
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.9) 100%);
   box-shadow:
-    0 0 15px rgba(255, 255, 255, 0.9),
-    0 0 30px rgba(255, 255, 255, 0.6),
-    0 0 45px rgba(102, 126, 234, 0.5);
+    0 0 6px rgba(255, 255, 255, 0.9),
+    0 0 12px rgba(255, 255, 255, 0.6),
+    0 0 20px rgba(102, 126, 234, 0.4);
   backface-visibility: visible;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  transform-origin: 0 50% 0;
 }
 
 .spiral-connector {
@@ -261,22 +272,28 @@ body {
 
 /* Thought Item Styles */
 .spiral-gallery-item.thought-item {
+  width: 160px;
+  height: 28px;
+  top: -14px;
+  left: -80px;
   background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 0 4px;
   cursor: pointer;
   border: none;
 }
 
 .thought-preview {
-  font-size: 1.8rem;
   font-weight: 500;
   text-align: center;
   word-wrap: break-word;
   max-width: 100%;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Thought Display Modal */
@@ -284,9 +301,10 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 70vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,14 +314,17 @@ body {
 }
 
 .thought-display-content {
-  background: transparent;
-  border-radius: 20px;
-  padding: 3rem;
-  max-width: 800px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-width: 500px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
   cursor: default;
 }
@@ -312,27 +333,27 @@ body {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  color: white;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
 }
 
 .close-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .thought-full-text {
-  font-size: 2rem;
   line-height: 1.6;
   text-align: center;
   word-wrap: break-word;
@@ -340,17 +361,17 @@ body {
 }
 
 .delete-thought-button {
-  margin-top: 2rem;
-  padding: 0.75rem 2rem;
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.5rem;
   background: rgba(244, 67, 54, 0.2);
   backdrop-filter: blur(10px);
   color: #ef9a9a;
   border: 1px solid rgba(244, 67, 54, 0.4);
   border-radius: 50px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -359,8 +380,6 @@ body {
 .delete-thought-button:hover {
   background: rgba(244, 67, 54, 0.3);
   border-color: rgba(244, 67, 54, 0.6);
-  transform: translateY(-2px);
-  color: #ffcdd2;
 }
 
 /* Modal Overlay */
@@ -650,6 +669,51 @@ body {
 .form-group small {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
+}
+
+.font-size-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  transition: box-shadow 0.2s ease;
+}
+
+.font-size-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+
+.font-size-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.font-size-labels {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 
 .color-picker-wrapper {

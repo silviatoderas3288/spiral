@@ -7,7 +7,7 @@ const router = express.Router();
 // POST /api/upload - Add a thought with text, color, and font
 router.post('/upload', express.json(), (req, res) => {
   try {
-    const { text, color, font } = req.body;
+    const { text, color, font, fontSize } = req.body;
 
     if (!text || !text.trim()) {
       return res.status(400).json({ success: false, error: 'Text is required' });
@@ -26,6 +26,7 @@ router.post('/upload', express.json(), (req, res) => {
       text: text.trim(),
       color: color,
       font: font,
+      fontSize: fontSize || 18,
       timestamp: Date.now()
     };
 
