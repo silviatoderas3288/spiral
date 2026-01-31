@@ -4,52 +4,65 @@ import UploadModal from './components/UploadModal'
 import SpiralGallery from './components/SpiralGallery'
 
 function App() {
-  const [images, setImages] = useState([])
-  const [filteredImages, setFilteredImages] = useState([])
+  const [thoughts, setThoughts] = useState([])
+  const [filteredThoughts, setFilteredThoughts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Fetch images on mount
+  // Fetch thoughts on mount
   useEffect(() => {
-    fetchImages()
+    fetchThoughts()
   }, [])
 
-  // Filter images based on search query
+  // Filter thoughts based on search query
   useEffect(() => {
     if (searchQuery.trim() === '') {
-      setFilteredImages(images)
+      setFilteredThoughts(thoughts)
     } else {
-      const filtered = images.filter(img =>
-        img.text?.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = thoughts.filter(thought =>
+        thought.text?.toLowerCase().includes(searchQuery.toLowerCase())
       )
-      setFilteredImages(filtered)
+      setFilteredThoughts(filtered)
     }
-  }, [searchQuery, images])
+  }, [searchQuery, thoughts])
 
-  const fetchImages = async () => {
+  const fetchThoughts = async () => {
     try {
-      const response = await axios.get('/api/images')
+      const response = await axios.get('/api/thoughts')
       if (response.data.success) {
-        setImages(response.data.images)
-        setFilteredImages(response.data.images)
+        setThoughts(response.data.thoughts)
+        setFilteredThoughts(response.data.thoughts)
       }
     } catch (error) {
-      console.error('Error fetching images:', error)
+      console.error('Error fetching thoughts:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleUploadSuccess = (newImage) => {
-    // Add new image to the top of the list
-    setImages(prevImages => [newImage, ...prevImages])
+  const handleUploadSuccess = (newThought) => {
+    // Add new thought to the top of the list
+    setThoughts(prevThoughts => [newThought, ...prevThoughts])
     // Close modal after successful upload
     setShowUploadModal(false)
   }
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value)
+  }
+
+  const handleDeleteThought = async (thoughtId) => {
+    try {
+      const response = await axios.delete(`/api/thoughts/${thoughtId}`)
+      if (response.data.success) {
+        // Remove the thought from state
+        setThoughts(prevThoughts => prevThoughts.filter(t => t.id !== thoughtId))
+      }
+    } catch (error) {
+      console.error('Error deleting thought:', error)
+      alert('Failed to delete thought')
+    }
   }
 
   return (
@@ -59,13 +72,13 @@ function App() {
         {loading ? (
           <div className="loading">Loading thoughts...</div>
         ) : (
-          <SpiralGallery images={filteredImages} />
+          <SpiralGallery images={filteredThoughts} onDeleteThought={handleDeleteThought} />
         )}
       </div>
 
       {/* Right Side - Controls */}
       <div className="controls-panel">
-        <h1>Thought Spiral</h1>
+        <h1>Spiraling thoughts</h1>
 
         <div className="search-container">
           <input
@@ -86,7 +99,7 @@ function App() {
         </button>
 
         <div className="stats">
-          <p>{filteredImages.length} {filteredImages.length === 1 ? 'thought' : 'thoughts'}</p>
+          <p>{filteredThoughts.length} {filteredThoughts.length === 1 ? 'thought' : 'thoughts'}</p>
         </div>
       </div>
 

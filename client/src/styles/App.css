@@ -180,15 +180,20 @@ body {
 }
 
 .spiral-line-dot {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   position: absolute;
-  top: -3px;
-  left: -3px;
+  top: -5px;
+  left: -5px;
   border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.5);
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 30%, rgba(200, 200, 255, 0.7) 60%, rgba(102, 126, 234, 0.3) 100%);
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 1),
+    0 0 30px rgba(255, 255, 255, 0.9),
+    0 0 45px rgba(102, 126, 234, 0.8),
+    0 0 60px rgba(102, 126, 234, 0.6);
   backface-visibility: visible;
+  filter: blur(0.8px);
 }
 
 .spiral-line-segment {
@@ -254,37 +259,108 @@ body {
   transform: scale(1.05);
 }
 
-.image-display {
-  position: fixed;
-  cursor: pointer;
-  width: 1000px;
-  height: 600px;
-  top: 50%;
-  left: 50%;
-  margin-top: -300px;
-  margin-left: -500px;
-  border: 2px solid white;
-  border-radius: 4px;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  transition: 0.5s all ease-out;
-  transform: scale(0, 0);
-  z-index: 100;
+/* Thought Item Styles */
+.spiral-gallery-item.thought-item {
+  background-color: transparent;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+  border: none;
 }
 
-.image-caption {
-  width: 100%;
-  padding: 2rem;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-  color: white;
-  font-size: 1.5rem;
+.thought-preview {
+  font-size: 1.8rem;
   font-weight: 500;
   text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  word-wrap: break-word;
+  max-width: 100%;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Thought Display Modal */
+.thought-display {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  cursor: pointer;
+}
+
+.thought-display-content {
+  background: transparent;
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  cursor: default;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.thought-full-text {
+  font-size: 2rem;
+  line-height: 1.6;
+  text-align: center;
+  word-wrap: break-word;
+  padding: 2rem 1rem;
+}
+
+.delete-thought-button {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  background: rgba(244, 67, 54, 0.2);
+  backdrop-filter: blur(10px);
+  color: #ef9a9a;
+  border: 1px solid rgba(244, 67, 54, 0.4);
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.delete-thought-button:hover {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: rgba(244, 67, 54, 0.6);
+  transform: translateY(-2px);
+  color: #ffcdd2;
 }
 
 /* Modal Overlay */
@@ -294,7 +370,8 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -313,15 +390,17 @@ body {
 
 /* Modal Content */
 .modal-content {
-  background: white;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
   padding: 2.5rem;
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
 }
 
@@ -340,10 +419,10 @@ body {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   font-size: 2rem;
-  color: #666;
+  color: white;
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -352,17 +431,19 @@ body {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
 }
 
 .modal-close:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .modal-content h2 {
   margin-bottom: 1.5rem;
-  color: #333;
+  color: white;
   font-size: 1.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Upload Form in Modal */
@@ -454,66 +535,297 @@ body {
 
 .form-group label {
   font-weight: 600;
-  color: #333;
+  color: white;
   font-size: 0.95rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
   font-family: inherit;
   font-size: 1rem;
   resize: vertical;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+}
+
+.form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.form-group input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.form-group input[type="color"]:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-group select option {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 0.5rem;
+  font-size: 1.1rem;
+  font-family: inherit !important;
+}
+
+/* Individual font styles for each option */
+.form-group select option[value="Arial"] { font-family: Arial, sans-serif; }
+.form-group select option[value="Times New Roman"] { font-family: 'Times New Roman', serif; }
+.form-group select option[value="Courier New"] { font-family: 'Courier New', monospace; }
+.form-group select option[value="Georgia"] { font-family: Georgia, serif; }
+.form-group select option[value="Verdana"] { font-family: Verdana, sans-serif; }
+.form-group select option[value="Comic Sans MS"] { font-family: 'Comic Sans MS', cursive; }
+.form-group select option[value="Impact"] { font-family: Impact, sans-serif; }
+.form-group select option[value="Trebuchet MS"] { font-family: 'Trebuchet MS', sans-serif; }
+.form-group select option[value="Lucida Console"] { font-family: 'Lucida Console', monospace; }
+.form-group select option[value="Palatino"] { font-family: Palatino, serif; }
+.form-group select option[value="Brush Script MT"] { font-family: 'Brush Script MT', cursive; }
+.form-group select option[value="Lucida Handwriting"] { font-family: 'Lucida Handwriting', cursive; }
+.form-group select option[value="Copperplate"] { font-family: Copperplate, serif; }
+.form-group select option[value="Papyrus"] { font-family: Papyrus, fantasy; }
+.form-group select option[value="Garamond"] { font-family: Garamond, serif; }
+.form-group select option[value="Bookman"] { font-family: Bookman, serif; }
+.form-group select option[value="Arial Black"] { font-family: 'Arial Black', sans-serif; }
+.form-group select option[value="Century Gothic"] { font-family: 'Century Gothic', sans-serif; }
+.form-group select option[value="Franklin Gothic Medium"] { font-family: 'Franklin Gothic Medium', sans-serif; }
+.form-group select option[value="Gill Sans"] { font-family: 'Gill Sans', sans-serif; }
+.form-group select option[value="Helvetica"] { font-family: Helvetica, sans-serif; }
+.form-group select option[value="Optima"] { font-family: Optima, sans-serif; }
+.form-group select option[value="Rockwell"] { font-family: Rockwell, serif; }
+.form-group select option[value="Didot"] { font-family: Didot, serif; }
+.form-group select option[value="Bodoni MT"] { font-family: 'Bodoni MT', serif; }
+.form-group select option[value="Baskerville"] { font-family: Baskerville, serif; }
+.form-group select option[value="Futura"] { font-family: Futura, sans-serif; }
+.form-group select option[value="Consolas"] { font-family: Consolas, monospace; }
+.form-group select option[value="Monaco"] { font-family: Monaco, monospace; }
+.form-group select option[value="Andale Mono"] { font-family: 'Andale Mono', monospace; }
+.form-group select option[value="Luminari"] { font-family: Luminari, fantasy; }
+.form-group select option[value="Chalkduster"] { font-family: Chalkduster, fantasy; }
+.form-group select option[value="Bradley Hand"] { font-family: 'Bradley Hand', cursive; }
+.form-group select option[value="Marker Felt"] { font-family: 'Marker Felt', cursive; }
+.form-group select option[value="Zapfino"] { font-family: Zapfino, cursive; }
+.form-group select option[value="American Typewriter"] { font-family: 'American Typewriter', serif; }
+.form-group select option[value="Courier"] { font-family: Courier, monospace; }
+.form-group select option[value="Herculanum"] { font-family: Herculanum, fantasy; }
+.form-group select option[value="Snell Roundhand"] { font-family: 'Snell Roundhand', cursive; }
+.form-group select option[value="Trattatello"] { font-family: Trattatello, cursive; }
+
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.form-group small {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.color-value {
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.preview-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-group label {
+  font-weight: 600;
+  color: white;
+  font-size: 0.95rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-preview {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .upload-button {
-  width: 100%;
-  padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: auto;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  align-self: center;
+  margin-top: 0.5rem;
 }
 
 .upload-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .upload-button:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .message {
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 0.9rem;
   text-align: center;
+  backdrop-filter: blur(10px);
 }
 
 .message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background: rgba(76, 175, 80, 0.2);
+  color: #a5d6a7;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: rgba(244, 67, 54, 0.2);
+  color: #ef9a9a;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* Custom Font Selector */
+.custom-font-selector {
+  position: relative;
+  width: 100%;
+}
+
+.font-selector-display {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.font-selector-display:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.font-selector-display.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dropdown-arrow {
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.font-selector-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.font-option {
+  padding: 0.75rem 1rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.font-option:last-child {
+  border-bottom: none;
+}
+
+.font-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.font-option.selected {
+  background: rgba(102, 126, 234, 0.3);
+  border-left: 3px solid #667eea;
+}
+
+.font-selector-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.font-selector-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.font-selector-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+
+.font-selector-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive design */

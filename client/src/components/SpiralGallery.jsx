@@ -1,15 +1,14 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const RADIUS = 720
 const SLICE_COUNT = 12
 const ITEM_SHIFT = 80
 
-const SpiralGallery = ({ images }) => {
+const SpiralGallery = ({ images, onDeleteThought }) => {
   const el = useRef(null)
   const spiralLine = useRef(null)
   const animId = useRef(0)
-  const img = useRef(null)
-  const caption = useRef(null)
+  const [selectedThought, setSelectedThought] = useState(null)
 
   useEffect(() => {
     if (!el.current || images.length === 0) return
@@ -69,27 +68,26 @@ const SpiralGallery = ({ images }) => {
     }
   }, [images])
 
-  // Display the image with caption
-  const pickImage = (imageUrl, text) => {
-    if (img.current && caption.current) {
-      img.current.style.backgroundImage = `url(${imageUrl})`
-      img.current.style.transform = 'scale(1, 1)'
-      caption.current.textContent = text || ''
-      caption.current.style.opacity = text ? '1' : '0'
-    }
+  // Display the selected thought
+  const pickThought = (thought) => {
+    setSelectedThought(thought)
   }
 
-  const closeImage = () => {
-    if (img.current && caption.current) {
-      img.current.style.transform = 'scale(0.0, 0.0)'
-      caption.current.style.opacity = '0'
+  const closeThought = () => {
+    setSelectedThought(null)
+  }
+
+  const handleDelete = async (thoughtId) => {
+    if (onDeleteThought) {
+      await onDeleteThought(thoughtId)
+      closeThought()
     }
   }
 
   // Generate spiral line points for the trajectory
   // Generate enough points to cover the entire spiral path plus extra behind for trail
   // Need points from negative Y (behind/above) to positive Y (ahead/below) to show complete trail
-  const totalPoints = Math.max(images.length * 4, 800)
+  const totalPoints = Math.max(images.length * 50, 1000)
   const spiralPoints = Array.from({ length: totalPoints }, (_, i) => {
     const angle = (i / SLICE_COUNT) * 360
     const angleRad = (angle * Math.PI) / 180
@@ -117,19 +115,50 @@ const SpiralGallery = ({ images }) => {
       </div>
 
       <div className="spiral-gallery" ref={el}>
-        {images.map((image, index) => (
-          <div
-            onClick={() => pickImage(image.url, image.text)}
-            key={image.filename || index}
-            style={{ backgroundImage: `url(${image.url})` }}
-            className="spiral-gallery-item"
-          />
-        ))}
+        {images.map((thought, index) => {
+          const previewText = thought.text.length > 15
+            ? thought.text.substring(0, 15) + '...'
+            : thought.text
+
+          return (
+            <div
+              onClick={() => pickThought(thought)}
+              key={thought.id || index}
+              className="spiral-gallery-item thought-item"
+              style={{
+                color: thought.color,
+                fontFamily: thought.font
+              }}
+            >
+              <span className="thought-preview">{previewText}</span>
+            </div>
+          )
+        })}
       </div>
 
-      <div onClick={closeImage} className="image-display" ref={img}>
-        <div className="image-caption" ref={caption}></div>
-      </div>
+      {/* Thought display modal */}
+      {selectedThought && (
+        <div onClick={closeThought} className="thought-display">
+          <div className="thought-display-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-button" onClick={closeThought}>×</button>
+            <div
+              className="thought-full-text"
+              style={{
+                color: selectedThought.color,
+                fontFamily: selectedThought.font
+              }}
+            >
+              {selectedThought.text}
+            </div>
+            <button
+              className="delete-thought-button"
+              onClick={() => handleDelete(selectedThought.id)}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

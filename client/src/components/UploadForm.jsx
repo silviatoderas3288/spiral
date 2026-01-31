@@ -2,62 +2,57 @@ import { useState } from 'react'
 import axios from 'axios'
 
 function UploadForm({ onUploadSuccess }) {
-  const [selectedFile, setSelectedFile] = useState(null)
   const [text, setText] = useState('')
+  const [color, setColor] = useState('#000000')
+  const [font, setFont] = useState('Arial')
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      // Check file type
-      if (!file.type.startsWith('image/')) {
-        setMessage('Please select an image file')
-        return
-      }
-      // Check file size (5MB)
-      if (file.size > 5242880) {
-        setMessage('File size must be less than 5MB')
-        return
-      }
-      setSelectedFile(file)
-      setMessage('')
-    }
-  }
+  const availableFonts = [
+    'Arial',
+    'Times New Roman',
+    'Courier New',
+    'Georgia',
+    'Verdana',
+    'Comic Sans MS',
+    'Impact',
+    'Trebuchet MS',
+    'Lucida Console',
+    'Palatino'
+  ]
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!selectedFile) {
-      setMessage('Please select an image')
+    if (!text.trim()) {
+      setMessage('Please enter your thought')
       return
     }
 
     setUploading(true)
     setMessage('')
 
-    const formData = new FormData()
-    formData.append('image', selectedFile)
-    formData.append('text', text)
-
     try {
-      const response = await axios.post('/api/upload', formData, {
+      const response = await axios.post('/api/upload', {
+        text: text.trim(),
+        color: color,
+        font: font
+      }, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       })
 
       if (response.data.success) {
-        setMessage('Image uploaded successfully!')
-        setSelectedFile(null)
+        setMessage('Thought added successfully!')
         setText('')
-        // Reset file input
-        e.target.reset()
+        setColor('#000000')
+        setFont('Arial')
         // Notify parent component
         onUploadSuccess(response.data.data)
       }
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Upload failed. Please try again.')
+      setMessage(error.response?.data?.error || 'Failed to add thought. Please try again.')
       console.error('Upload error:', error)
     } finally {
       setUploading(false)
@@ -68,33 +63,68 @@ function UploadForm({ onUploadSuccess }) {
     <div className="upload-form-container">
       <form onSubmit={handleSubmit} className="upload-form">
         <div className="form-group">
-          <label htmlFor="image">Choose Image</label>
-          <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={uploading}
-          />
-          {selectedFile && (
-            <span className="file-name">{selectedFile.name}</span>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="text">Caption (optional)</label>
+          <label htmlFor="text">Your Thought</label>
           <textarea
             id="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Add a caption for your image..."
-            rows="3"
+            placeholder="Enter your thought..."
+            rows="4"
             disabled={uploading}
+            maxLength="500"
           />
+          <small>{text.length}/500 characters</small>
         </div>
 
-        <button type="submit" disabled={uploading || !selectedFile}>
-          {uploading ? 'Uploading...' : 'Upload to Spiral'}
+        <div className="form-group">
+          <label htmlFor="color">Text Color</label>
+          <div className="color-picker-wrapper">
+            <input
+              type="color"
+              id="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              disabled={uploading}
+            />
+            <span className="color-value">{color}</span>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="font">Font Style</label>
+          <select
+            id="font"
+            value={font}
+            onChange={(e) => setFont(e.target.value)}
+            disabled={uploading}
+          >
+            {availableFonts.map(fontName => (
+              <option key={fontName} value={fontName} style={{ fontFamily: fontName }}>
+                {fontName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="preview-group">
+          <label>Preview</label>
+          <div
+            className="text-preview"
+            style={{
+              color: color,
+              fontFamily: font,
+              padding: '10px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              minHeight: '50px'
+            }}
+          >
+            {text || 'Your thought will appear here...'}
+          </div>
+        </div>
+
+        <button type="submit" disabled={uploading || !text.trim()}>
+          {uploading ? 'Adding...' : 'Add to Spiral'}
         </button>
 
         {message && (

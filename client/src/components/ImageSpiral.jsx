@@ -1,28 +1,74 @@
-import { useRef, useMemo, useEffect } from 'react'
-import { useFrame, useLoader } from '@react-three/fiber'
-import { TextureLoader } from 'three'
+import { useRef, useMemo, useEffect, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 
-function ImagePlane({ position, imageUrl, text, index }) {
+function TextThought({ position, thought, index, onClick }) {
   const meshRef = useRef()
-  const texture = useLoader(TextureLoader, imageUrl)
+  const [isHovered, setIsHovered] = useState(false)
 
   useFrame(({ camera }) => {
     if (meshRef.current) {
-      // Billboard effect - make image face camera
+      // Billboard effect - make text face camera
       meshRef.current.quaternion.copy(camera.quaternion)
     }
   })
 
+  // Create preview text (max 15 chars + ...)
+  const previewText = thought.text.length > 15
+    ? thought.text.substring(0, 15) + '...'
+    : thought.text
+
   return (
-    <mesh ref={meshRef} position={position}>
-      <planeGeometry args={[1.5, 1.5]} />
-      <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
-    </mesh>
+    <group
+      ref={meshRef}
+      position={position}
+      onPointerOver={() => setIsHovered(true)}
+      onPointerOut={() => setIsHovered(false)}
+      onClick={() => onClick(thought)}
+    >
+      {/* Background plane */}
+      <mesh position={[0, 0, -0.01]}>
+        <planeGeometry args={[2, 1.5]} />
+        <meshBasicMaterial
+          color={isHovered ? '#f0f0f0' : '#ffffff'}
+          side={THREE.DoubleSide}
+          transparent
+          opacity={0.9}
+        />
+      </mesh>
+
+      {/* Text */}
+      <Text
+        fontSize={0.2}
+        color={thought.color}
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={1.8}
+        font={`/${thought.font.replace(/ /g, '+')}`}
+        outlineWidth={0.01}
+        outlineColor="#ffffff"
+      >
+        {previewText}
+      </Text>
+
+      {/* Hover indicator */}
+      {isHovered && (
+        <Text
+          position={[0, -0.6, 0]}
+          fontSize={0.1}
+          color="#666666"
+          anchorX="center"
+          anchorY="middle"
+        >
+          Click to view full
+        </Text>
+      )}
+    </group>
   )
 }
 
-function ImageSpiral({ images }) {
+function TextSpiral({ thoughts, onThoughtClick }) {
   const groupRef = useRef()
   const spiralLineRef = useRef()
   const scrollFactorRef = useRef(0)
@@ -30,12 +76,12 @@ function ImageSpiral({ images }) {
   // Generate spiral positions
   const spiralPositions = useMemo(() => {
     const positions = []
-    const totalImages = images.length
+    const totalThoughts = thoughts.length
     const heightIncrement = 0.5 // Vertical spacing
-    const rotationIncrement = Math.PI / 4 // 45 degrees per image
+    const rotationIncrement = Math.PI / 4 // 45 degrees per thought
 
-    for (let i = 0; i < totalImages; i++) {
-      const t = i / Math.max(totalImages - 1, 1) // Normalized position (0 to 1)
+    for (let i = 0; i < totalThoughts; i++) {
+      const t = i / Math.max(totalThoughts - 1, 1) // Normalized position (0 to 1)
       const height = i * heightIncrement
       const angle = i * rotationIncrement
 
@@ -51,15 +97,15 @@ function ImageSpiral({ images }) {
     }
 
     return positions
-  }, [images])
+  }, [thoughts])
 
   // Generate smooth spiral path (more points for smoother line)
   const spiralPathPoints = useMemo(() => {
     const points = []
     const numPoints = 200 // Number of points for smooth spiral
-    const maxHeight = images.length * 0.5
+    const maxHeight = thoughts.length * 0.5
     const heightIncrement = maxHeight / numPoints
-    const rotationIncrement = (Math.PI / 4) * (images.length / numPoints)
+    const rotationIncrement = (Math.PI / 4) * (thoughts.length / numPoints)
 
     for (let i = 0; i < numPoints; i++) {
       const height = i * heightIncrement
@@ -74,7 +120,7 @@ function ImageSpiral({ images }) {
     }
 
     return points
-  }, [images.length])
+  }, [thoughts.length])
 
   // Continuous rotation and morphing
   useFrame((state) => {
@@ -166,22 +212,22 @@ function ImageSpiral({ images }) {
         />
       </line>
 
-      {/* Images on the spiral */}
-      {images.map((image, index) => (
-        <ImagePlane
-          key={image.filename}
+      {/* Text thoughts on the spiral */}
+      {thoughts.map((thought, index) => (
+        <TextThought
+          key={thought.id}
           position={[
             spiralPositions[index]?.x || 0,
             spiralPositions[index]?.y || 0,
             spiralPositions[index]?.z || 0
           ]}
-          imageUrl={image.url}
-          text={image.text}
+          thought={thought}
           index={index}
+          onClick={onThoughtClick}
         />
       ))}
     </group>
   )
 }
 
-export default ImageSpiral
+export default TextSpiral

@@ -34,10 +34,10 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-// Initialize images.json if it doesn't exist
-const imagesJsonPath = path.join(dataDir, 'images.json');
-if (!fs.existsSync(imagesJsonPath)) {
-  fs.writeFileSync(imagesJsonPath, JSON.stringify({ images: [] }, null, 2));
+// Initialize thoughts.json if it doesn't exist
+const thoughtsJsonPath = path.join(dataDir, 'thoughts.json');
+if (!fs.existsSync(thoughtsJsonPath)) {
+  fs.writeFileSync(thoughtsJsonPath, JSON.stringify({ thoughts: [] }, null, 2));
 }
 
 // API Routes

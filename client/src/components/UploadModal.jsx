@@ -1,63 +1,76 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
+import FontSelector from './FontSelector'
 
 function UploadModal({ onUploadSuccess, onClose }) {
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [previewUrl, setPreviewUrl] = useState(null)
   const [text, setText] = useState('')
+  const [color, setColor] = useState('#ffffff')
+  const [font, setFont] = useState('Arial')
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
-  const fileInputRef = useRef(null)
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      // Check file type
-      if (!file.type.startsWith('image/')) {
-        setMessage('Please select an image file')
-        return
-      }
-      // Check file size (5MB)
-      if (file.size > 5242880) {
-        setMessage('File size must be less than 5MB')
-        return
-      }
-      setSelectedFile(file)
-      setMessage('')
-
-      // Create preview
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+  const availableFonts = [
+    'Arial',
+    'Times New Roman',
+    'Courier New',
+    'Georgia',
+    'Verdana',
+    'Comic Sans MS',
+    'Impact',
+    'Trebuchet MS',
+    'Lucida Console',
+    'Palatino',
+    'Brush Script MT',
+    'Lucida Handwriting',
+    'Copperplate',
+    'Papyrus',
+    'Garamond',
+    'Bookman',
+    'Arial Black',
+    'Century Gothic',
+    'Franklin Gothic Medium',
+    'Gill Sans',
+    'Helvetica',
+    'Optima',
+    'Rockwell',
+    'Didot',
+    'Bodoni MT',
+    'Baskerville',
+    'Futura',
+    'Consolas',
+    'Monaco',
+    'Andale Mono',
+    'Luminari',
+    'Chalkduster',
+    'Bradley Hand',
+    'Marker Felt',
+    'Zapfino',
+    'American Typewriter',
+    'Courier',
+    'Herculanum',
+    'Snell Roundhand',
+    'Trattatello'
+  ]
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!selectedFile) {
-      setMessage('Please select an image')
-      return
-    }
-
     if (!text.trim()) {
-      setMessage('Please add a caption for your thought')
+      setMessage('Please enter your thought')
       return
     }
 
     setUploading(true)
     setMessage('')
 
-    const formData = new FormData()
-    formData.append('image', selectedFile)
-    formData.append('text', text)
-
     try {
-      const response = await axios.post('/api/upload', formData, {
+      const response = await axios.post('/api/upload', {
+        text: text.trim(),
+        color: color,
+        font: font
+      }, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       })
 
@@ -67,7 +80,7 @@ function UploadModal({ onUploadSuccess, onClose }) {
         // Modal will close automatically via parent
       }
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Upload failed. Please try again.')
+      setMessage(error.response?.data?.error || 'Failed to add thought. Please try again.')
       console.error('Upload error:', error)
       setUploading(false)
     }
@@ -89,56 +102,65 @@ function UploadModal({ onUploadSuccess, onClose }) {
         <h2>Add Your Thought</h2>
 
         <form onSubmit={handleSubmit} className="upload-form-modal">
-          <div className="image-upload-area">
-            {previewUrl ? (
-              <div className="image-preview">
-                <img src={previewUrl} alt="Preview" />
-                <button
-                  type="button"
-                  className="change-image-btn"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  Change Image
-                </button>
-              </div>
-            ) : (
-              <div
-                className="upload-placeholder"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <div className="upload-icon">📷</div>
-                <p>Click to select an image</p>
-                <p className="upload-hint">or drag and drop</p>
-              </div>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              id="image"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={uploading}
-              style={{ display: 'none' }}
-            />
-          </div>
-
           <div className="form-group">
-            <label htmlFor="text">Caption (required) *</label>
+            <label htmlFor="text">Your Thought</label>
             <textarea
               id="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Share your thought..."
-              rows="3"
+              placeholder="Enter your thought..."
+              rows="4"
               disabled={uploading}
-              required
+              maxLength="500"
             />
+            <small>{text.length}/500 characters</small>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="color">Text Color</label>
+            <div className="color-picker-wrapper">
+              <input
+                type="color"
+                id="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                disabled={uploading}
+              />
+              <span className="color-value">{color}</span>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="font">Font Style</label>
+            <FontSelector
+              value={font}
+              onChange={setFont}
+              disabled={uploading}
+              fonts={availableFonts}
+            />
+          </div>
+
+          <div className="preview-group">
+            <label>Preview</label>
+            <div
+              className="text-preview"
+              style={{
+                color: color,
+                fontFamily: font,
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                minHeight: '50px'
+              }}
+            >
+              {text || 'Your thought will appear here...'}
+            </div>
           </div>
 
           <button
             type="submit"
             className="upload-button"
-            disabled={uploading || !selectedFile || !text.trim()}
+            disabled={uploading || !text.trim()}
           >
             {uploading ? 'Adding...' : 'Add to Spiral'}
           </button>
