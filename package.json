@@ -1,0 +1,26 @@
+{
+  "name": "spiral-image-gallery",
+  "version": "1.0.0",
+  "description": "3D spiral visualization for user-uploaded images",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "start": "cd server && npm start",
+    "build": "cd client && npm run build"
+  },
+  "keywords": [
+    "3d",
+    "spiral",
+    "three.js",
+    "react",
+    "image-gallery",
+    "webgl"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
