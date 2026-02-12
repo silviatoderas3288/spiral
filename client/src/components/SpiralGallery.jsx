@@ -17,18 +17,18 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
     const thoughtItems = spiralLine.current.querySelectorAll('.thought-item')
     const count = thoughtItems.length
 
-    // Total length of the spiral loop in "item units"
-    // Each word travels this many units before wrapping back to the top
-    const loopLength = count * ITEM_SHIFT + 2000
+    // Screen boundaries - thoughts spawn way above visible area
+    const spawnY = -5000 // Far above screen (completely invisible)
+    const disappearY = 4000 // Below screen (invisible)
+    const travelDistance = disappearY - spawnY
 
-    // Each thought starts evenly spaced along the spiral
-    // t represents how far down the spiral each thought has traveled
-    const t = thoughtItems.length > 0
-      ? Array.from({ length: count }, (_, i) => i * ITEM_SHIFT)
-      : []
+    // Initialize each thought's position spread across the travel distance
+    const positions = Array.from({ length: count }, (_, i) =>
+      spawnY + (travelDistance / count) * i
+    )
 
     let currentAngle = 0
-    const speed = 1
+    const scrollSpeed = 1.5
 
     const updateFrame = () => {
       currentAngle += 0.2
@@ -38,21 +38,21 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
       }
 
       thoughtItems.forEach((item, i) => {
-        // Advance position along the spiral
-        t[i] += speed
-        // Wrap back to the top when it exits the bottom
-        if (t[i] > loopLength) {
-          t[i] -= loopLength
+        // Move down
+        positions[i] += scrollSpeed
+
+        // When reaching bottom (invisible), teleport to top (also invisible)
+        if (positions[i] >= disappearY) {
+          positions[i] = spawnY
         }
 
-        // Convert t (distance along spiral) to 3D position
-        // t / ITEM_SHIFT gives us the continuous spiral index
-        const spiralIndex = t[i] / ITEM_SHIFT
+        // Calculate spiral position
+        const spiralIndex = positions[i] / ITEM_SHIFT
         const angle = angleUnit * spiralIndex
         const angleRad = (angle * Math.PI) / 180
         const xpos = Math.sin(angleRad) * RADIUS
         const zpos = Math.cos(angleRad) * RADIUS
-        const ypos = t[i]
+        const ypos = positions[i]
 
         item.style.transform = `translateX(${xpos}px) translateZ(${zpos}px) translateY(${ypos}px)`
       })
@@ -82,15 +82,14 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
     }
   }
 
-  // Generate a long static spiral that covers the full scroll range.
-  // The spiral stays still (no Y scroll) so the trail is always visible.
-  // We extend well beyond the thought range to fill the visible area.
+  // Generate sparse spiral line segments (not very continuous)
+  // Use the same spiral calculation for both line and thoughts
   const generateSpiralPoints = () => {
     const points = []
     const angleUnit = 360 / SLICE_COUNT
-    const stepsPerItem = 12
-    // Extend the spiral far beyond the actual thoughts so it fills the screen
-    const totalHeight = images.length * ITEM_SHIFT + 2600
+    const stepsPerItem = 6 // Few steps = visible gaps between segments
+    const startY = -5000 // Match thought spawn point
+    const totalHeight = 9000
     const totalSteps = Math.ceil(totalHeight / ITEM_SHIFT) * stepsPerItem
 
     for (let s = 0; s < totalSteps; s++) {
@@ -99,7 +98,7 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
       const angleRad = (angle * Math.PI) / 180
       const xpos = Math.sin(angleRad) * RADIUS
       const zpos = Math.cos(angleRad) * RADIUS
-      const ypos = i * ITEM_SHIFT
+      const ypos = startY + (i * ITEM_SHIFT)
 
       points.push({ xpos, ypos, zpos })
     }
@@ -111,9 +110,9 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
 
   return (
     <div className="spiral-container">
-      {/* Spiral trajectory line - continuous 3D line using connected segments */}
+      {/* Spiral container */}
       <div className="spiral-line" ref={spiralLine}>
-        {/* Spiral line segments */}
+        {/* Sparse spiral line segments */}
         {spiralPoints.map((point, index) => {
           if (index === spiralPoints.length - 1) return null
 
@@ -139,7 +138,7 @@ const SpiralGallery = ({ images, onDeleteThought }) => {
           )
         })}
 
-        {/* Thought items — same container so they share the spiral's coordinate space */}
+        {/* Thought items */}
         {images.map((thought, index) => {
           const previewText = thought.text.length > 15
             ? thought.text.substring(0, 15) + '...'

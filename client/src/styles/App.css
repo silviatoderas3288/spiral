@@ -32,8 +32,8 @@ body {
   background: #000000;
 }
 
-/* Controls Panel - Right Side */
-.controls-panel {
+/* Sidebar - Right Side */
+.sidebar {
   width: 30vw;
   height: 100vh;
   padding: 3rem 2rem;
@@ -44,45 +44,25 @@ body {
   background: rgba(0, 0, 0, 0.95);
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.controls-panel h1 {
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar h1 {
   font-size: 2.5rem;
   color: white;
   font-weight: 700;
   text-align: center;
+  width: 100%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 1rem;
-}
-
-/* Search Container */
-.search-container {
-  width: 100%;
-}
-
-.search-input {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  font-size: 1.1rem;
-  border: 2px solid rgba(102, 126, 234, 0.3);
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
 }
 
 /* Add Thought Button */
@@ -119,10 +99,19 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 
-.stats p {
+.stats-label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.4rem 0;
+}
+
+.stats-value {
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
   margin: 0;
@@ -208,19 +197,18 @@ body {
 
 .spiral-line-segment {
   position: absolute;
-  height: 3px;
+  height: 4px;
   top: 0;
   left: 0;
-  background: linear-gradient(90deg,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(255, 255, 255, 0.9) 100%);
+  background: white;
   box-shadow:
-    0 0 6px rgba(255, 255, 255, 0.9),
-    0 0 12px rgba(255, 255, 255, 0.6),
-    0 0 20px rgba(102, 126, 234, 0.4);
+    0 0 10px rgba(255, 255, 255, 0.95),
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 30px rgba(102, 126, 234, 0.6);
   backface-visibility: visible;
   transform-origin: 0 50% 0;
+  z-index: 1;
+  border-radius: 2px;
 }
 
 .spiral-connector {
@@ -272,17 +260,21 @@ body {
 
 /* Thought Item Styles */
 .spiral-gallery-item.thought-item {
-  width: 160px;
-  height: 28px;
-  top: -14px;
-  left: -80px;
+  width: 240px;
+  height: 40px;
+  top: 0;
+  left: -120px;
   background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 8px;
   cursor: pointer;
   border: none;
+  z-index: 10;
+  position: absolute;
+  pointer-events: auto;
+  transform-origin: center center;
 }
 
 .thought-preview {
@@ -327,6 +319,16 @@ body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
   cursor: default;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.thought-display-content::-webkit-scrollbar {
+  display: none;
+}
+
+.thought-display-content:focus {
+  outline: none;
 }
 
 .close-button {
