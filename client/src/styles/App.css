@@ -25,27 +25,28 @@ body {
 
 /* Spiral Scene Container - Left Side */
 .spiral-scene-container {
-  width: 70vw;
+  width: 75vw;
   height: 100vh;
   position: relative;
   overflow: hidden;
   background: #000000;
 }
 
-/* Sidebar - Right Side */
+/* Sidebar - Left Side */
 .sidebar {
-  width: 30vw;
+  width: 25vw;
   height: 100vh;
-  padding: 3rem 2rem;
+  padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2rem;
+  align-items: flex-start;
+  gap: 1rem;
   background: rgba(0, 0, 0, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  font-family: 'Brawler', serif;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -53,16 +54,18 @@ body {
 }
 
 .sidebar h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: white;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   width: 100%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 1rem;
+  font-family: 'Brawler', serif;
+  white-space: nowrap;
 }
 
 /* Add Thought Button */
@@ -552,6 +555,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -559,20 +565,24 @@ body {
   color: white;
   font-size: 0.95rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-family: 'Brawler', serif;
+  text-align: left;
+  width: 100%;
 }
 
 .form-group textarea {
-  width: 100%;
+  width: 130%;
   padding: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  font-family: inherit;
+  font-family: 'Brawler', serif;
   font-size: 1rem;
   resize: vertical;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   color: white;
+  text-align: left;
 }
 
 .form-group textarea::placeholder {
@@ -586,13 +596,30 @@ body {
 }
 
 .form-group input[type="color"] {
-  width: 60px;
-  height: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.1);
+  padding: 0;
+  overflow: hidden;
+}
+
+.form-group input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 50%;
+}
+
+.form-group input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.form-group input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
 }
 
 .form-group input[type="color"]:hover {
@@ -600,7 +627,7 @@ body {
 }
 
 .form-group select {
-  width: 100%;
+  width: 110%;
   padding: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
@@ -671,12 +698,15 @@ body {
 .form-group small {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
+  font-family: 'Brawler', serif;
+  text-align: left;
+  width: 100%;
 }
 
 .font-size-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
+  width: 130%;
   height: 6px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.2);
@@ -716,18 +746,23 @@ body {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.8rem;
   margin-top: 0.25rem;
+  font-family: 'Brawler', serif;
+  width: 130%;
 }
 
 .color-picker-wrapper {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .color-value {
-  font-family: monospace;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
+  font-family: 'Brawler', serif;
+  color: #888888;
+  font-size: 0.9rem;
 }
 
 .preview-group {
@@ -803,7 +838,7 @@ body {
 /* Custom Font Selector */
 .custom-font-selector {
   position: relative;
-  width: 100%;
+  width: 130%;
 }
 
 .font-selector-display {

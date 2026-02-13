@@ -13,6 +13,10 @@ router.post('/upload', express.json(), (req, res) => {
       return res.status(400).json({ success: false, error: 'Text is required' });
     }
 
+    if (text.trim().length > 300) {
+      return res.status(400).json({ success: false, error: 'Text must be 300 characters or less' });
+    }
+
     if (!color) {
       return res.status(400).json({ success: false, error: 'Color is required' });
     }
