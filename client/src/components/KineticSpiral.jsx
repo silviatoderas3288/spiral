@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react'
 import Gl from '../Gl'
 
-const KineticSpiral = ({ thoughts, liveText, liveColor, liveFontSize, liveFont, speed, opacity, zoom }) => {
+const KineticSpiral = ({ thoughts, liveText, liveColor, liveFontSize, liveFont, speed, opacity, zoom, onZoomChange }) => {
   const containerRef = useRef(null)
   const glRef = useRef(null)
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    const gl = new Gl(containerRef.current)
+    const gl = new Gl(containerRef.current, onZoomChange)
     glRef.current = gl
     gl.init(thoughts)
 
@@ -17,7 +17,7 @@ const KineticSpiral = ({ thoughts, liveText, liveColor, liveFontSize, liveFont, 
         glRef.current.destroy()
       }
     }
-  }, [])
+  }, [onZoomChange])
 
   useEffect(() => {
     // Update speed when it changes
@@ -55,7 +55,7 @@ const KineticSpiral = ({ thoughts, liveText, liveColor, liveFontSize, liveFont, 
     }
   }, [thoughts])
 
-  return <div ref={containerRef} style={{ width: '75vw', height: '100vh' }} />
+  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 }
 
 export default KineticSpiral

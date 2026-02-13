@@ -3,19 +3,25 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import shaders from './shaders.js';
 
 export default class {
-  constructor(container) {
+  constructor(container, onZoomChange) {
     this.container = container;
+    this.onZoomChange = onZoomChange;
     this.renderer = new THREE.WebGLRenderer({
       alpha: true
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    this.renderer.setSize(window.innerWidth * 0.75, window.innerHeight);
+
+    // Get container dimensions
+    const width = container.clientWidth || window.innerWidth * 0.75;
+    const height = container.clientHeight || window.innerHeight;
+
+    this.renderer.setSize(width, height);
     this.renderer.setClearColor(0x000000, 1);
     this.container.appendChild(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(
       45,
-      (window.innerWidth * 0.75) / window.innerHeight,
+      width / height,
       1,
       1000
     );
@@ -26,6 +32,13 @@ export default class {
     this.scene.background = new THREE.Color(0x000000);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+
+    // Listen to OrbitControls changes to update zoom slider
+    this.controls.addEventListener('change', () => {
+      if (this.onZoomChange) {
+        this.onZoomChange(this.camera.position.z);
+      }
+    });
 
     this.clock = new THREE.Clock();
     this.speed = 1; // Default speed multiplier
@@ -85,10 +98,10 @@ export default class {
 
   createRenderTarget(texture) {
     // Render Target setup
-    this.rt = new THREE.WebGLRenderTarget(
-      window.innerWidth * 0.75,
-      window.innerHeight
-    );
+    const width = this.container.clientWidth || window.innerWidth * 0.75;
+    const height = this.container.clientHeight || window.innerHeight;
+
+    this.rt = new THREE.WebGLRenderTarget(width, height);
 
     this.rtCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
     this.rtCamera.position.z = 2.5;
@@ -168,12 +181,16 @@ export default class {
   }
 
   resize() {
-    let width = window.innerWidth * 0.75;
-    let height = window.innerHeight;
+    const width = this.container.clientWidth || window.innerWidth * 0.75;
+    const height = this.container.clientHeight || window.innerHeight;
 
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+
+    if (this.rt) {
+      this.rt.setSize(width, height);
+    }
   }
 
   destroy() {

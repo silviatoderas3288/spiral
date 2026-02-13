@@ -118,11 +118,17 @@ function App() {
     }
   }
 
+  const handleZoomChange = (newZoom) => {
+    // Clamp the zoom value between 20 and 150
+    const clampedZoom = Math.max(20, Math.min(150, Math.round(newZoom)))
+    setZoom(clampedZoom)
+  }
+
   return (
     <div className="app">
       {/* Left Side - Sidebar */}
       <div className="sidebar">
-        <h1>Spiraling thoughts</h1>
+        <h1>Spiraling Thoughts</h1>
 
         <form onSubmit={handleSubmit} className="upload-form-sidebar">
           <div className="form-group">
@@ -248,7 +254,7 @@ function App() {
         {loading ? (
           <div className="loading">Loading thoughts...</div>
         ) : (
-          <KineticSpiral thoughts={thoughts} liveText={text} liveColor={color} liveFontSize={fontSize} liveFont={font} speed={speed} opacity={opacity} zoom={zoom} />
+          <KineticSpiral thoughts={thoughts} liveText={text} liveColor={color} liveFontSize={fontSize} liveFont={font} speed={speed} opacity={opacity} zoom={zoom} onZoomChange={handleZoomChange} />
         )}
       </div>
     </div>
