@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import KineticSpiral from './components/KineticSpiral'
 import FontSelector from './components/FontSelector'
@@ -118,11 +118,11 @@ function App() {
     }
   }
 
-  const handleZoomChange = (newZoom) => {
+  const handleZoomChange = useCallback((newZoom) => {
     // Clamp the zoom value between 20 and 150
     const clampedZoom = Math.max(20, Math.min(150, Math.round(newZoom)))
     setZoom(clampedZoom)
-  }
+  }, [])
 
   return (
     <div className="app">

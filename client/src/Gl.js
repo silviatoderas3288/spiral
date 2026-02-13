@@ -33,6 +33,14 @@ export default class {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
+    // Configure OrbitControls to enable zoom
+    this.controls.enableZoom = true;
+    this.controls.enableRotate = true;
+    this.controls.enablePan = false;
+    this.controls.minDistance = 20;
+    this.controls.maxDistance = 150;
+    this.controls.zoomSpeed = 1.0;
+
     // Listen to OrbitControls changes to update zoom slider
     this.controls.addEventListener('change', () => {
       if (this.onZoomChange) {
